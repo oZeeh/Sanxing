@@ -1,0 +1,18 @@
+@startuml
+start
+
+:Receber parâmetros da simulação;
+
+:Inicializar corpos;
+
+while (Simulação em execução?) is (sim)
+    :Construir estrutura espacial;
+    :Calcular forças entre corpos;
+    :Atualizar velocidade;
+    :Atualizar posição;
+endwhile (não)
+
+:Gerar saída dos dados;
+
+stop
+@enduml

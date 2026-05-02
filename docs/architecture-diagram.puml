@@ -1,0 +1,27 @@
+@startuml
+top to bottom direction
+
+package "Interface" {
+    [Interface Web / Local]
+}
+
+package "Core da Simulação" {
+    [Motor de Simulação]
+    [Módulo de Física]
+    [Módulo de Otimização]
+    [Módulo de Paralelização]
+}
+
+package "Saída de Dados" {
+    [Exportador de Dados]
+}
+
+[Interface Web / Local] --> [Motor de Simulação]
+
+[Motor de Simulação] --> [Módulo de Física]
+[Motor de Simulação] --> [Módulo de Otimização]
+[Motor de Simulação] --> [Módulo de Paralelização]
+
+[Motor de Simulação] --> [Exportador de Dados]
+
+@enduml

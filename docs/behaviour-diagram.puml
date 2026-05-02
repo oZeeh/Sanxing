@@ -1,0 +1,17 @@
+@startuml
+[*] --> Inicial
+
+Inicial --> Configurada : definir parâmetros
+
+Configurada --> Executando : iniciar
+
+Executando --> Executando : atualizar estado
+Executando --> Pausada : pausar
+
+Pausada --> Executando : retomar
+
+Executando --> Finalizada : concluir simulação
+
+Finalizada --> Exportando : exportar dados
+Exportando --> [*]
+@enduml
