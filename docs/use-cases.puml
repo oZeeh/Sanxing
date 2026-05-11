@@ -1,0 +1,37 @@
+@startuml
+top to bottom direction
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam usecase {
+    BackgroundColor white
+    BorderColor black
+}
+
+actor Usuario
+
+rectangle "Sistema de Simulação Física Distribuída" {
+
+    usecase "Configurar\nSimulação" as UC1
+    usecase "Executar\nSimulação" as UC2
+    usecase "Visualizar\nResultados" as UC3
+    usecase "Exportar\nDados" as UC4
+
+    usecase "Definir\nParâmetros" as UC5
+    usecase "Selecionar\nMétodo de Cálculo" as UC6
+    usecase "Atualizar\nEstado dos Corpos" as UC7
+    usecase "Gerar Arquivo\nJSON/CSV" as UC8
+}
+
+Usuario --> UC1
+Usuario --> UC2
+Usuario --> UC3
+Usuario --> UC4
+
+UC1 .> UC5 : <<include>>
+UC1 .> UC6 : <<include>>
+
+UC2 .> UC7 : <<include>>
+
+UC4 .> UC8 : <<include>>
+
+@enduml
