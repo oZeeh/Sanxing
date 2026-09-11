@@ -1,0 +1,33 @@
+{
+  "config": {
+    "gravitational_constant": 1.0,
+    "delta_time": 0.01,
+    "steps": 10,
+    "softening": 0.001,
+    "solver": "brute_force",
+    "export_enabled": true
+  },
+  "bodies": [
+    {
+      "id": "alpha",
+      "mass": 1.0,
+      "position": {"x": -1.0, "y": 0.0},
+      "velocity": {"x": 0.0, "y": -0.25},
+      "acceleration": {"x": 0.0, "y": 0.0}
+    },
+    {
+      "id": "beta",
+      "mass": 1.0,
+      "position": {"x": 1.0, "y": 0.0},
+      "velocity": {"x": 0.0, "y": 0.25},
+      "acceleration": {"x": 0.0, "y": 0.0}
+    },
+    {
+      "id": "gamma",
+      "mass": 0.25,
+      "position": {"x": 0.0, "y": 1.5},
+      "velocity": {"x": -0.35, "y": 0.0},
+      "acceleration": {"x": 0.0, "y": 0.0}
+    }
+  ]
+}

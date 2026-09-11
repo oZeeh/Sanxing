@@ -1,0 +1,31 @@
+@startgantt
+title Cronograma do Projeto - Simulação de N-Corpos
+
+Project starts 2026-03-17
+printscale monthly
+
+saturday are closed
+sunday are closed
+
+[Levantamento bibliográfico] starts 2026-03-17 and ends 2026-04-14
+[Definição do escopo e requisitos] starts 2026-03-24 and ends 2026-04-21
+[Modelagem e arquitetura do sistema] starts 2026-04-15 and ends 2026-05-15
+
+[Implementação do core headless] starts 2026-05-01 and ends 2026-06-15
+[Solver força bruta] starts 2026-05-10 and ends 2026-06-01
+[Exportação JSON/JSONL] starts 2026-06-01 and ends 2026-06-20
+
+[Benchmark inicial] starts 2026-06-15 and ends 2026-07-10
+[Implementação Quadtree/Barnes-Hut] starts 2026-07-01 and ends 2026-08-15
+[Comparação força bruta vs Barnes-Hut] starts 2026-08-10 and ends 2026-09-05
+
+[Viewer da simulação] starts 2026-08-20 and ends 2026-09-30
+[Testes e ajustes] starts 2026-09-15 and ends 2026-10-20
+[Análise dos resultados] starts 2026-10-10 and ends 2026-11-10
+
+[Escrita do TCC] starts 2026-09-01 and ends 2026-11-30
+[Revisão final] starts 2026-11-15 and ends 2026-12-10
+
+[Entrega final] happens 2026-12-10
+
+@endgantt
