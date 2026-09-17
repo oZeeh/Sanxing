@@ -16,6 +16,9 @@ Metrics:
 - output size
 - body count
 - solver
+- theta
+- average position divergence against brute force
+- max position divergence against brute force
 - compiler target and optimization mode
 
-The first comparison is brute-force scaling across body counts. Later Barnes-Hut work must include both runtime comparison and accuracy/divergence comparison against brute force on shared initial conditions.
+The first comparison is brute-force scaling across body counts. Barnes-Hut benchmark runs should use the same deterministic initial conditions as brute force and record both runtime and accuracy/divergence data.

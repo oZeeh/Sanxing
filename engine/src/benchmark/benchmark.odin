@@ -15,6 +15,7 @@ BenchmarkConfig :: struct {
 	body_count: int,
 	steps: int,
 	solver_name: string,
+	theta: f64,
 	samples: int,
 	target_label: string,
 	opt_label: string,
@@ -25,10 +26,13 @@ BenchmarkResult :: struct {
 	steps: int,
 	sample_index: int,
 	solver: string,
+	theta: f64,
 	elapsed_seconds: f64,
 	average_step_seconds: f64,
 	interactions: i64,
 	interactions_per_second: f64,
+	average_position_divergence: f64,
+	max_position_divergence: f64,
 	frames_written: int,
 	target_label: string,
 	opt_label: string,
@@ -38,6 +42,7 @@ DEFAULT_COUNTS :: [?]int{100, 500, 1000, 5000, 10000}
 DEFAULT_STEPS :: 10
 DEFAULT_SAMPLES :: 3
 DEFAULT_LABEL :: "unspecified"
+DEFAULT_THETA :: 0.5
 GOLDEN_ANGLE :: 2.39996322972865332
 
 parse_positive_int :: proc(text: string) -> (int, bool) {
@@ -54,6 +59,34 @@ parse_nonnegative_int :: proc(text: string) -> (int, bool) {
 		return 0, false
 	}
 	return value, true
+}
+
+parse_nonnegative_f64 :: proc(text: string) -> (f64, bool) {
+	value, ok := strconv.parse_f64(text)
+	if !ok || value < 0 || math.is_nan(value) || math.is_inf(value) {
+		return 0, false
+	}
+	return value, true
+}
+
+solver_name :: proc(solver: simcore.Solver_Type) -> string {
+	switch solver {
+	case .brute_force:
+		return "brute_force"
+	case .barnes_hut:
+		return "barnes_hut"
+	}
+	return "barnes_hut"
+}
+
+parse_solver :: proc(text: string) -> (simcore.Solver_Type, bool) {
+	switch text {
+	case "brute_force":
+		return .brute_force, true
+	case "barnes_hut":
+		return .barnes_hut, true
+	}
+	return .brute_force, false
 }
 
 parse_counts :: proc(text: string) -> ([]int, bool) {
@@ -84,6 +117,8 @@ BenchmarkOptions :: struct {
 	counts: []int,
 	steps: int,
 	samples: int,
+	solver: simcore.Solver_Type,
+	theta: f64,
 	target_label: string,
 	opt_label: string,
 }
@@ -104,6 +139,8 @@ default_options :: proc() -> BenchmarkOptions {
 		counts = counts,
 		steps = DEFAULT_STEPS,
 		samples = DEFAULT_SAMPLES,
+		solver = .brute_force,
+		theta = DEFAULT_THETA,
 		target_label = strings.clone(DEFAULT_LABEL),
 		opt_label = strings.clone(DEFAULT_LABEL),
 	}
@@ -143,6 +180,20 @@ parse_options :: proc(args: []string) -> (BenchmarkOptions, string, bool) {
 				return {}, "--samples must be a positive integer", false
 			}
 			options.samples = samples
+		case "--solver":
+			solver, ok := parse_solver(value)
+			if !ok {
+				destroy_options(&options)
+				return {}, "--solver must be one of brute_force, barnes_hut", false
+			}
+			options.solver = solver
+		case "--theta":
+			theta, ok := parse_nonnegative_f64(value)
+			if !ok {
+				destroy_options(&options)
+				return {}, "--theta must be a nonnegative finite number", false
+			}
+			options.theta = theta
 		case "--target-label":
 			if value == "" {
 				destroy_options(&options)
@@ -197,8 +248,11 @@ interactions_for :: proc(body_count, steps: int) -> i64 {
 	return i64(body_count) * i64(body_count - 1) * i64(steps)
 }
 
-make_result :: proc(body_count, steps, sample_index: int, elapsed_seconds: f64, target_label, opt_label: string) -> BenchmarkResult {
-	interactions := interactions_for(body_count, steps)
+make_result :: proc(body_count, steps, sample_index: int, solver: simcore.Solver_Type, theta, elapsed_seconds, average_divergence, max_divergence: f64, target_label, opt_label: string) -> BenchmarkResult {
+	interactions: i64
+	if solver == .brute_force {
+		interactions = interactions_for(body_count, steps)
+	}
 	avg_step_seconds := 0.0
 	if steps > 0 {
 		avg_step_seconds = elapsed_seconds / f64(steps)
@@ -211,11 +265,14 @@ make_result :: proc(body_count, steps, sample_index: int, elapsed_seconds: f64, 
 		body_count = body_count,
 		steps = steps,
 		sample_index = sample_index,
-		solver = "brute_force",
+		solver = solver_name(solver),
+		theta = theta,
 		elapsed_seconds = elapsed_seconds,
 		average_step_seconds = avg_step_seconds,
 		interactions = interactions,
 		interactions_per_second = interactions_per_second,
+		average_position_divergence = average_divergence,
+		max_position_divergence = max_divergence,
 		frames_written = 0,
 		target_label = target_label,
 		opt_label = opt_label,
@@ -237,30 +294,67 @@ write_result :: proc(file: ^os.File, result: BenchmarkResult) -> bool {
 	return true
 }
 
-run_sample :: proc(body_count, steps, sample_index: int, target_label, opt_label: string, file: ^os.File) -> bool {
-	bodies := generate_bodies(body_count)
-	defer destroy_bodies(bodies)
-
+run_steps :: proc(bodies: []simcore.Body, steps: int, solver_kind: simcore.Solver_Type, theta: f64) -> bool {
 	config := simcore.SimulationConfig{
 		gravitational_constant = 1.0,
 		delta_time = 0.01,
 		steps = steps,
 		softening = 0.001,
-		solver = .brute_force,
+		theta = theta,
+		solver = solver_kind,
 		export_enabled = false,
 	}
 	state := simcore.SimulationState{bodies = bodies, step = 0, time = 0}
-	solver := solvers.get_solver(.brute_force)
+	solver := solvers.get_solver(solver_kind)
 
-	start := time.tick_now()
 	for _ in 0..<steps {
 		status := simcore.step_state(&state, config, solver, integration.semi_implicit_euler)
 		if status != .ok {
 			return false
 		}
 	}
+	return true
+}
+
+measure_divergence :: proc(candidate, baseline: []simcore.Body) -> (f64, f64) {
+	if len(candidate) == 0 || len(candidate) != len(baseline) {
+		return 0, 0
+	}
+	total := 0.0
+	maximum := 0.0
+	for body, i in candidate {
+		delta := simcore.vec2_sub(body.position, baseline[i].position)
+		distance := simcore.vec2_length(delta)
+		total += distance
+		if distance > maximum {
+			maximum = distance
+		}
+	}
+	return total / f64(len(candidate)), maximum
+}
+
+run_sample :: proc(body_count, steps, sample_index: int, solver_kind: simcore.Solver_Type, theta: f64, target_label, opt_label: string, file: ^os.File) -> bool {
+	bodies := generate_bodies(body_count)
+	defer destroy_bodies(bodies)
+
+	start := time.tick_now()
+	if !run_steps(bodies, steps, solver_kind, theta) {
+		return false
+	}
 	elapsed := time.duration_seconds(time.tick_since(start))
-	result := make_result(body_count, steps, sample_index, elapsed, target_label, opt_label)
+
+	average_divergence := 0.0
+	max_divergence := 0.0
+	if solver_kind != .brute_force {
+		baseline := generate_bodies(body_count)
+		defer destroy_bodies(baseline)
+		if !run_steps(baseline, steps, .brute_force, theta) {
+			return false
+		}
+		average_divergence, max_divergence = measure_divergence(bodies, baseline)
+	}
+
+	result := make_result(body_count, steps, sample_index, solver_kind, theta, elapsed, average_divergence, max_divergence, target_label, opt_label)
 	return write_result(file, result)
 }
 
@@ -273,7 +367,7 @@ run :: proc(output_path: string, options: BenchmarkOptions) -> bool {
 
 	for count in options.counts {
 		for sample in 0..<options.samples {
-			if !run_sample(count, options.steps, sample, options.target_label, options.opt_label, file) {
+			if !run_sample(count, options.steps, sample, options.solver, options.theta, options.target_label, options.opt_label, file) {
 				return false
 			}
 		}

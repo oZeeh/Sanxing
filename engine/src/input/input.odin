@@ -184,6 +184,7 @@ read_config :: proc(result: ^ValidationResult, obj: json.Object) -> (simcore.Sim
 		"delta_time",
 		"steps",
 		"softening",
+		"theta",
 		"solver",
 		"export_enabled",
 	})
@@ -225,6 +226,23 @@ read_config :: proc(result: ^ValidationResult, obj: json.Object) -> (simcore.Sim
 		}
 	} else {
 		all_ok = false
+	}
+	config.theta = 0.5
+	if theta_value, theta_present := config_obj["theta"]; theta_present {
+		theta, theta_ok := as_f64(theta_value)
+		if !theta_ok {
+			add_error(result, "$.config.theta", "must be a number")
+			all_ok = false
+		} else if !is_finite(theta) {
+			add_error(result, "$.config.theta", "must be finite")
+			all_ok = false
+		} else {
+			config.theta = theta
+			if theta < 0 {
+				add_error(result, "$.config.theta", "must be >= 0")
+				all_ok = false
+			}
+		}
 	}
 
 	solver_value, solver_ok := require_value(result, config_obj, "$.config", "solver")

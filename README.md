@@ -5,12 +5,10 @@ Sanxing is a headless Odin N-body simulation engine skeleton for three-body and 
 The current implementation:
 
 - loads a strict JSON simulation file,
-- runs a brute-force gravitational solver,
+- runs brute-force and Barnes-Hut gravitational solvers,
 - integrates with semi-implicit Euler,
 - writes one JSONL frame before stepping and one frame after each step.
-- emits compute-only benchmark JSONL records.
-
-Barnes-Hut and quadtree support are present only as documented stubs in this initial version.
+- emits compute-only benchmark JSONL records, including Barnes-Hut divergence against brute force.
 
 ## Quick Start
 
@@ -24,6 +22,12 @@ Run benchmarks:
 
 ```sh
 odin run engine/src -- benchmark /tmp/sanxing-bench.jsonl
+```
+
+Benchmark solver and accuracy options:
+
+```sh
+odin run engine/src -- benchmark /tmp/sanxing-bench.jsonl --solver barnes_hut --theta 0.5
 ```
 
 ## Verify

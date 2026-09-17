@@ -27,6 +27,19 @@ test_valid_simple_system :: proc(t: ^testing.T) {
 	testing.expect(t, ok)
 	testing.expect_value(t, len(input.bodies), 3)
 	testing.expect_value(t, input.config.steps, 10)
+	testing.expect_value(t, input.config.theta, 0.5)
+}
+
+@(test)
+test_optional_theta :: proc(t: ^testing.T) {
+	input, result, ok := parse_test(`{"config":{"gravitational_constant":1,"delta_time":1,"steps":0,"softening":0,"theta":0.7,"solver":"barnes_hut","export_enabled":true},"bodies":[{"id":"a","mass":1,"position":{"x":0,"y":0},"velocity":{"x":0,"y":0},"acceleration":{"x":0,"y":0}}]}`)
+	defer destroy_validation_result(&result)
+	defer if ok {
+		destroy_input(&input)
+	}
+
+	testing.expect(t, ok)
+	testing.expect_value(t, input.config.theta, 0.7)
 }
 
 @(test)
@@ -53,7 +66,7 @@ test_unknown_fields :: proc(t: ^testing.T) {
 
 @(test)
 test_invalid_numeric_ranges :: proc(t: ^testing.T) {
-	_, result, ok := parse_test(`{"config":{"gravitational_constant":-1,"delta_time":0,"steps":-1,"softening":-1,"solver":"nope","export_enabled":"yes"},"bodies":[{"id":"a","mass":1,"position":{"x":0,"y":0},"velocity":{"x":0,"y":0},"acceleration":{"x":0,"y":0}}]}`)
+	_, result, ok := parse_test(`{"config":{"gravitational_constant":-1,"delta_time":0,"steps":-1,"softening":-1,"theta":-1,"solver":"nope","export_enabled":"yes"},"bodies":[{"id":"a","mass":1,"position":{"x":0,"y":0},"velocity":{"x":0,"y":0},"acceleration":{"x":0,"y":0}}]}`)
 	defer destroy_validation_result(&result)
 
 	testing.expect(t, !ok)
@@ -61,6 +74,7 @@ test_invalid_numeric_ranges :: proc(t: ^testing.T) {
 	testing.expect(t, has_error(result, "$.config.delta_time: must be > 0"))
 	testing.expect(t, has_error(result, "$.config.steps: must be >= 0"))
 	testing.expect(t, has_error(result, "$.config.softening: must be >= 0"))
+	testing.expect(t, has_error(result, "$.config.theta: must be >= 0"))
 	testing.expect(t, has_error(result, "$.config.solver: must be one of brute_force, barnes_hut"))
 	testing.expect(t, has_error(result, "$.config.export_enabled: must be a boolean"))
 }

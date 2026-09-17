@@ -1,0 +1,437 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sanxing Local Replay</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #111315;
+      --panel: #1b2024;
+      --panel-2: #252b30;
+      --text: #eef2f1;
+      --muted: #9eaaa5;
+      --line: #384047;
+      --accent: #42c6a4;
+      --accent-2: #f2b84b;
+      --danger: #ef6f6c;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+    }
+
+    header,
+    footer {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 12px 16px;
+      background: var(--panel);
+      border-color: var(--line);
+    }
+
+    header {
+      border-bottom: 1px solid var(--line);
+      flex-wrap: wrap;
+    }
+
+    footer {
+      border-top: 1px solid var(--line);
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.2;
+      font-weight: 700;
+      min-width: 150px;
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    button,
+    input[type="file"]::file-selector-button {
+      min-height: 34px;
+      border: 1px solid var(--line);
+      background: var(--panel-2);
+      color: var(--text);
+      border-radius: 6px;
+      padding: 0 12px;
+      font: inherit;
+      cursor: pointer;
+    }
+
+    button:hover,
+    input[type="file"]::file-selector-button:hover {
+      border-color: var(--accent);
+    }
+
+    button:disabled {
+      color: #66706c;
+      cursor: not-allowed;
+      border-color: #2b3135;
+    }
+
+    input[type="file"] {
+      max-width: 250px;
+      color: var(--muted);
+    }
+
+    input[type="range"] {
+      width: min(48vw, 520px);
+      accent-color: var(--accent);
+    }
+
+    .meta {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      color: var(--muted);
+      font-size: 14px;
+      flex-wrap: wrap;
+    }
+
+    .meta strong {
+      color: var(--text);
+      font-weight: 650;
+    }
+
+    main {
+      position: relative;
+      min-height: 420px;
+      overflow: hidden;
+      background: #141719;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .empty {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      text-align: center;
+      color: var(--muted);
+      pointer-events: none;
+    }
+
+    .empty[data-hidden="true"] {
+      display: none;
+    }
+
+    .status {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .status[data-kind="error"] {
+      color: var(--danger);
+    }
+
+    .swatch {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent-2);
+      display: inline-block;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    @media (max-width: 720px) {
+      header,
+      footer {
+        align-items: stretch;
+      }
+
+      .controls,
+      .meta {
+        width: 100%;
+      }
+
+      input[type="range"] {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>Sanxing Replay</h1>
+      <div class="controls">
+        <input id="fileInput" type="file" accept=".jsonl,application/jsonl,text/plain">
+        <button id="prevButton" type="button" disabled title="Previous frame">Prev</button>
+        <button id="playButton" type="button" disabled title="Play or pause">Play</button>
+        <button id="nextButton" type="button" disabled title="Next frame">Next</button>
+      </div>
+      <input id="timeline" type="range" min="0" max="0" value="0" disabled aria-label="Timeline">
+    </header>
+
+    <main id="stage">
+      <canvas id="canvas"></canvas>
+      <div id="emptyState" class="empty">Load an engine JSONL export to replay the 2D simulation.</div>
+    </main>
+
+    <footer>
+      <div class="meta">
+        <span><span class="swatch"></span><strong id="frameLabel">0 / 0</strong> frames</span>
+        <span>step <strong id="stepLabel">-</strong></span>
+        <span>time <strong id="timeLabel">-</strong></span>
+        <span>bodies <strong id="bodyLabel">0</strong></span>
+      </div>
+      <div id="status" class="status">No file loaded.</div>
+    </footer>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+    const stage = document.getElementById("stage");
+    const fileInput = document.getElementById("fileInput");
+    const prevButton = document.getElementById("prevButton");
+    const playButton = document.getElementById("playButton");
+    const nextButton = document.getElementById("nextButton");
+    const timeline = document.getElementById("timeline");
+    const frameLabel = document.getElementById("frameLabel");
+    const stepLabel = document.getElementById("stepLabel");
+    const timeLabel = document.getElementById("timeLabel");
+    const bodyLabel = document.getElementById("bodyLabel");
+    const status = document.getElementById("status");
+    const emptyState = document.getElementById("emptyState");
+
+    let frames = [];
+    let frameIndex = 0;
+    let playing = false;
+    let lastTick = 0;
+    const frameIntervalMs = 120;
+
+    function setStatus(message, kind = "info") {
+      status.textContent = message;
+      status.dataset.kind = kind;
+    }
+
+    function resizeCanvas() {
+      const rect = stage.getBoundingClientRect();
+      const ratio = window.devicePixelRatio || 1;
+      canvas.width = Math.max(1, Math.floor(rect.width * ratio));
+      canvas.height = Math.max(1, Math.floor(rect.height * ratio));
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      draw();
+    }
+
+    function validateFrame(frame, lineNumber) {
+      if (!frame || typeof frame !== "object") {
+        throw new Error(`line ${lineNumber}: frame must be an object`);
+      }
+      if (!Array.isArray(frame.bodies)) {
+        throw new Error(`line ${lineNumber}: bodies must be an array`);
+      }
+      for (const body of frame.bodies) {
+        if (!body.position || typeof body.position.x !== "number" || typeof body.position.y !== "number") {
+          throw new Error(`line ${lineNumber}: body positions must include numeric x and y`);
+        }
+      }
+    }
+
+    function parseJsonl(text) {
+      const parsed = [];
+      const lines = text.split(/\r?\n/);
+      for (let i = 0; i < lines.length; i += 1) {
+        const line = lines[i].trim();
+        if (line.length === 0) {
+          continue;
+        }
+        const frame = JSON.parse(line);
+        validateFrame(frame, i + 1);
+        parsed.push(frame);
+      }
+      if (parsed.length === 0) {
+        throw new Error("file has no frames");
+      }
+      return parsed;
+    }
+
+    function worldBounds(frame) {
+      let minX = frame.bodies[0]?.position.x ?? -1;
+      let maxX = minX;
+      let minY = frame.bodies[0]?.position.y ?? -1;
+      let maxY = minY;
+      for (const body of frame.bodies) {
+        minX = Math.min(minX, body.position.x);
+        maxX = Math.max(maxX, body.position.x);
+        minY = Math.min(minY, body.position.y);
+        maxY = Math.max(maxY, body.position.y);
+      }
+      const padX = Math.max(0.5, (maxX - minX) * 0.15);
+      const padY = Math.max(0.5, (maxY - minY) * 0.15);
+      return { minX: minX - padX, maxX: maxX + padX, minY: minY - padY, maxY: maxY + padY };
+    }
+
+    function project(point, bounds, width, height) {
+      const worldWidth = Math.max(1e-9, bounds.maxX - bounds.minX);
+      const worldHeight = Math.max(1e-9, bounds.maxY - bounds.minY);
+      const scale = Math.min(width / worldWidth, height / worldHeight);
+      const usedWidth = worldWidth * scale;
+      const usedHeight = worldHeight * scale;
+      const left = (width - usedWidth) * 0.5;
+      const top = (height - usedHeight) * 0.5;
+      return {
+        x: left + (point.x - bounds.minX) * scale,
+        y: top + (bounds.maxY - point.y) * scale,
+      };
+    }
+
+    function drawGrid(width, height) {
+      ctx.fillStyle = "#141719";
+      ctx.fillRect(0, 0, width, height);
+      ctx.strokeStyle = "#242a2e";
+      ctx.lineWidth = 1;
+      const spacing = 48;
+      for (let x = 0; x <= width; x += spacing) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, height);
+        ctx.stroke();
+      }
+      for (let y = 0; y <= height; y += spacing) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(width, y);
+        ctx.stroke();
+      }
+    }
+
+    function bodyColor(index) {
+      const colors = ["#42c6a4", "#f2b84b", "#7db7ff", "#ef6f6c", "#b9d87a", "#d39cff"];
+      return colors[index % colors.length];
+    }
+
+    function draw() {
+      const rect = stage.getBoundingClientRect();
+      const width = rect.width;
+      const height = rect.height;
+      drawGrid(width, height);
+
+      if (frames.length === 0) {
+        return;
+      }
+
+      const frame = frames[frameIndex];
+      const bounds = worldBounds(frame);
+      for (const [index, body] of frame.bodies.entries()) {
+        const screen = project(body.position, bounds, width, height);
+        const radius = Math.max(3, Math.min(12, Math.sqrt(Math.max(0, body.mass)) * 4));
+        ctx.beginPath();
+        ctx.fillStyle = bodyColor(index);
+        ctx.arc(screen.x, screen.y, radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = "#101214";
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      }
+    }
+
+    function syncUi() {
+      const hasFrames = frames.length > 0;
+      prevButton.disabled = !hasFrames || frameIndex === 0;
+      nextButton.disabled = !hasFrames || frameIndex >= frames.length - 1;
+      playButton.disabled = !hasFrames;
+      playButton.textContent = playing ? "Pause" : "Play";
+      timeline.disabled = !hasFrames;
+      timeline.max = hasFrames > 0 ? String(frames.length - 1) : "0";
+      timeline.value = String(frameIndex);
+      emptyState.dataset.hidden = hasFrames ? "true" : "false";
+
+      const frame = frames[frameIndex];
+      frameLabel.textContent = hasFrames ? `${frameIndex + 1} / ${frames.length}` : "0 / 0";
+      stepLabel.textContent = hasFrames ? String(frame.step ?? frameIndex) : "-";
+      timeLabel.textContent = hasFrames && typeof frame.time === "number" ? frame.time.toFixed(4) : "-";
+      bodyLabel.textContent = hasFrames ? String(frame.bodies.length) : "0";
+      draw();
+    }
+
+    function setFrame(index) {
+      frameIndex = Math.max(0, Math.min(frames.length - 1, index));
+      if (frameIndex >= frames.length - 1) {
+        playing = false;
+      }
+      syncUi();
+    }
+
+    function tick(now) {
+      if (playing && now - lastTick >= frameIntervalMs) {
+        lastTick = now;
+        setFrame(frameIndex + 1);
+      }
+      requestAnimationFrame(tick);
+    }
+
+    fileInput.addEventListener("change", async () => {
+      const file = fileInput.files?.[0];
+      if (!file) {
+        return;
+      }
+      try {
+        const text = await file.text();
+        frames = parseJsonl(text);
+        frameIndex = 0;
+        playing = false;
+        setStatus(`Loaded ${file.name}.`);
+        syncUi();
+      } catch (error) {
+        frames = [];
+        frameIndex = 0;
+        playing = false;
+        setStatus(error instanceof Error ? error.message : "failed to load file", "error");
+        syncUi();
+      }
+    });
+
+    prevButton.addEventListener("click", () => setFrame(frameIndex - 1));
+    nextButton.addEventListener("click", () => setFrame(frameIndex + 1));
+    playButton.addEventListener("click", () => {
+      playing = !playing;
+      lastTick = performance.now();
+      syncUi();
+    });
+    timeline.addEventListener("input", () => {
+      playing = false;
+      setFrame(Number(timeline.value));
+    });
+
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+    syncUi();
+    requestAnimationFrame(tick);
+  </script>
+</body>
+</html>

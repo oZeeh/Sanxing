@@ -25,6 +25,7 @@ SimulationConfig :: struct {
 	delta_time: f64,
 	steps: int,
 	softening: f64,
+	theta: f64,
 	solver: Solver_Type,
 	export_enabled: bool,
 }
@@ -91,6 +92,9 @@ validate_config :: proc(config: SimulationConfig) -> bool {
 		return false
 	}
 	if config.softening < 0 {
+		return false
+	}
+	if config.theta < 0 {
 		return false
 	}
 	return true

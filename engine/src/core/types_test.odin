@@ -32,11 +32,15 @@ test_validate_config :: proc(t: ^testing.T) {
 		delta_time = 0.1,
 		steps = 1,
 		softening = 0,
+		theta = 0.5,
 		solver = .brute_force,
 		export_enabled = true,
 	}
 
 	testing.expect(t, validate_config(config))
 	config.delta_time = 0
+	testing.expect(t, !validate_config(config))
+	config.delta_time = 0.1
+	config.theta = -0.1
 	testing.expect(t, !validate_config(config))
 }

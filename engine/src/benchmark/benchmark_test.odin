@@ -4,6 +4,7 @@ import "core:encoding/json"
 import "core:os"
 import "core:strings"
 import "core:testing"
+import simcore "../core"
 
 almost_equal :: proc(a, b: f64) -> bool {
 	diff := a - b
@@ -29,15 +30,18 @@ test_generate_bodies_is_deterministic :: proc(t: ^testing.T) {
 
 @(test)
 test_result_metrics :: proc(t: ^testing.T) {
-	result := make_result(10, 5, 2, 0.25, "target", "opt")
+	result := make_result(10, 5, 2, .brute_force, 0.5, 0.25, 0, 0, "target", "opt")
 
 	testing.expect_value(t, result.body_count, 10)
 	testing.expect_value(t, result.steps, 5)
 	testing.expect_value(t, result.sample_index, 2)
 	testing.expect_value(t, result.solver, "brute_force")
+	testing.expect(t, almost_equal(result.theta, 0.5))
 	testing.expect(t, almost_equal(result.average_step_seconds, 0.05))
 	testing.expect_value(t, result.interactions, i64(450))
 	testing.expect(t, almost_equal(result.interactions_per_second, 1800))
+	testing.expect(t, almost_equal(result.average_position_divergence, 0))
+	testing.expect(t, almost_equal(result.max_position_divergence, 0))
 	testing.expect_value(t, result.frames_written, 0)
 	testing.expect_value(t, result.target_label, "target")
 	testing.expect_value(t, result.opt_label, "opt")
@@ -49,6 +53,8 @@ test_parse_options_failures :: proc(t: ^testing.T) {
 		[]string{"--counts", "0"},
 		[]string{"--steps", "-1"},
 		[]string{"--samples", "0"},
+		[]string{"--solver", "nope"},
+		[]string{"--theta", "-0.1"},
 		[]string{"--target-label", ""},
 		[]string{"--opt-label", ""},
 		[]string{"--unknown", "x"},
@@ -66,7 +72,7 @@ test_parse_options_failures :: proc(t: ^testing.T) {
 
 @(test)
 test_parse_options_success :: proc(t: ^testing.T) {
-	options, _, ok := parse_options([]string{"--counts", "2,3", "--steps", "0", "--samples", "1", "--target-label", "cpu", "--opt-label", "debug"})
+	options, _, ok := parse_options([]string{"--counts", "2,3", "--steps", "0", "--samples", "1", "--solver", "barnes_hut", "--theta", "0.7", "--target-label", "cpu", "--opt-label", "debug"})
 	defer if ok {
 		destroy_options(&options)
 	}
@@ -77,6 +83,8 @@ test_parse_options_success :: proc(t: ^testing.T) {
 	testing.expect_value(t, options.counts[1], 3)
 	testing.expect_value(t, options.steps, 0)
 	testing.expect_value(t, options.samples, 1)
+	testing.expect_value(t, options.solver, simcore.Solver_Type.barnes_hut)
+	testing.expect(t, almost_equal(options.theta, 0.7))
 	testing.expect_value(t, options.target_label, "cpu")
 	testing.expect_value(t, options.opt_label, "debug")
 }
@@ -101,6 +109,9 @@ test_jsonl_result_structure :: proc(t: ^testing.T) {
 	testing.expect(t, strings.contains(text, `"steps":1`))
 	testing.expect(t, strings.contains(text, `"sample_index":0`))
 	testing.expect(t, strings.contains(text, `"solver":"brute_force"`))
+	testing.expect(t, strings.contains(text, `"theta":0.5`))
+	testing.expect(t, strings.contains(text, `"average_position_divergence":0`))
+	testing.expect(t, strings.contains(text, `"max_position_divergence":0`))
 	testing.expect(t, strings.contains(text, `"frames_written":0`))
 	testing.expect(t, strings.contains(text, `"target_label":"test-target"`))
 	testing.expect(t, strings.contains(text, `"opt_label":"test-opt"`))
@@ -109,4 +120,27 @@ test_jsonl_result_structure :: proc(t: ^testing.T) {
 	value, parse_err := json.parse(data, .JSON)
 	testing.expect(t, parse_err == nil)
 	json.destroy_value(value)
+}
+
+@(test)
+test_barnes_hut_jsonl_result_records_solver_theta_and_divergence :: proc(t: ^testing.T) {
+	path := "/tmp/sanxing-benchmark-barnes-test.jsonl"
+	os.remove(path)
+
+	options, _, ok := parse_options([]string{"--counts", "4", "--steps", "1", "--samples", "1", "--solver", "barnes_hut", "--theta", "0.5"})
+	testing.expect(t, ok)
+	defer destroy_options(&options)
+
+	testing.expect(t, run(path, options))
+
+	data, read_err := os.read_entire_file(path, context.allocator)
+	testing.expect(t, read_err == nil)
+	defer delete(data)
+
+	text := string(data)
+	testing.expect(t, strings.contains(text, `"solver":"barnes_hut"`))
+	testing.expect(t, strings.contains(text, `"theta":0.5`))
+	testing.expect(t, strings.contains(text, `"interactions":0`))
+	testing.expect(t, strings.contains(text, `"average_position_divergence":`))
+	testing.expect(t, strings.contains(text, `"max_position_divergence":`))
 }

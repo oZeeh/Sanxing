@@ -15,11 +15,6 @@ run_simulation :: proc(input: sim_input.SimulationInput, output_path: string) ->
 		return false
 	}
 
-	if input.config.solver == .barnes_hut {
-		fmt.eprintln("barnes_hut solver is not implemented in this skeleton")
-		return false
-	}
-
 	state := simcore.SimulationState{
 		bodies = input.bodies,
 		step = 0,
@@ -65,7 +60,7 @@ run_simulation :: proc(input: sim_input.SimulationInput, output_path: string) ->
 
 print_usage :: proc(program: string) {
 	fmt.eprintfln("usage: %s simulate <input.json> <output.jsonl>", program)
-	fmt.eprintfln("       %s benchmark <results.jsonl> [--counts 100,500] [--steps N] [--samples N] [--target-label TEXT] [--opt-label TEXT]", program)
+	fmt.eprintfln("       %s benchmark <results.jsonl> [--counts 100,500] [--steps N] [--samples N] [--solver brute_force|barnes_hut] [--theta N] [--target-label TEXT] [--opt-label TEXT]", program)
 }
 
 main :: proc() {
