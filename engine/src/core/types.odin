@@ -8,10 +8,10 @@ Vec2 :: struct {
 }
 
 Body :: struct {
-	id: string,
-	mass: f64,
-	position: Vec2,
-	velocity: Vec2,
+	id:           string,
+	mass:         f64,
+	position:     Vec2,
+	velocity:     Vec2,
 	acceleration: Vec2,
 }
 
@@ -22,18 +22,18 @@ Solver_Type :: enum {
 
 SimulationConfig :: struct {
 	gravitational_constant: f64,
-	delta_time: f64,
-	steps: int,
-	softening: f64,
-	theta: f64,
-	solver: Solver_Type,
-	export_enabled: bool,
+	delta_time:             f64,
+	steps:                  int,
+	softening:              f64,
+	theta:                  f64,
+	solver:                 Solver_Type,
+	export_enabled:         bool,
 }
 
 SimulationState :: struct {
 	bodies: []Body,
-	step: int,
-	time: f64,
+	step:   int,
+	time:   f64,
 }
 
 Step_Status :: enum {
@@ -42,7 +42,17 @@ Step_Status :: enum {
 	invalid_config,
 }
 
-Solver_Proc :: #type proc(bodies: []Body, config: SimulationConfig) -> Step_Status
+Solver_Stats :: struct {
+	direct_interactions:       i64,
+	approximated_interactions: i64,
+	tree_node_visits:          i64,
+}
+
+Solver_Proc :: #type proc(
+	bodies: []Body,
+	config: SimulationConfig,
+	stats: ^Solver_Stats,
+) -> Step_Status
 Integrator_Proc :: #type proc(bodies: []Body, config: SimulationConfig)
 
 vec2 :: proc(x, y: f64) -> Vec2 {
@@ -82,30 +92,38 @@ vec2_normalize :: proc(v: Vec2) -> Vec2 {
 }
 
 validate_config :: proc(config: SimulationConfig) -> bool {
-	if config.gravitational_constant < 0 {
+	if math.is_nan(config.gravitational_constant) ||
+	   math.is_inf(config.gravitational_constant) ||
+	   config.gravitational_constant < 0 {
 		return false
 	}
-	if config.delta_time <= 0 {
+	if math.is_nan(config.delta_time) || math.is_inf(config.delta_time) || config.delta_time <= 0 {
 		return false
 	}
 	if config.steps < 0 {
 		return false
 	}
-	if config.softening < 0 {
+	if math.is_nan(config.softening) || math.is_inf(config.softening) || config.softening < 0 {
 		return false
 	}
-	if config.theta < 0 {
+	if math.is_nan(config.theta) || math.is_inf(config.theta) || config.theta < 0 {
 		return false
 	}
 	return true
 }
 
-step_state :: proc(state: ^SimulationState, config: SimulationConfig, solver: Solver_Proc, integrator: Integrator_Proc) -> Step_Status {
+step_state :: proc(
+	state: ^SimulationState,
+	config: SimulationConfig,
+	solver: Solver_Proc,
+	integrator: Integrator_Proc,
+	stats: ^Solver_Stats = nil,
+) -> Step_Status {
 	if !validate_config(config) {
 		return .invalid_config
 	}
 
-	status := solver(state.bodies, config)
+	status := solver(state.bodies, config, stats)
 	if status != .ok {
 		return status
 	}

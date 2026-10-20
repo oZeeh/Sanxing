@@ -27,14 +27,14 @@ test_vec2_math :: proc(t: ^testing.T) {
 
 @(test)
 test_validate_config :: proc(t: ^testing.T) {
-	config := SimulationConfig{
+	config := SimulationConfig {
 		gravitational_constant = 1,
-		delta_time = 0.1,
-		steps = 1,
-		softening = 0,
-		theta = 0.5,
-		solver = .brute_force,
-		export_enabled = true,
+		delta_time             = 0.1,
+		steps                  = 1,
+		softening              = 0,
+		theta                  = 0.5,
+		solver                 = .brute_force,
+		export_enabled         = true,
 	}
 
 	testing.expect(t, validate_config(config))
@@ -42,5 +42,11 @@ test_validate_config :: proc(t: ^testing.T) {
 	testing.expect(t, !validate_config(config))
 	config.delta_time = 0.1
 	config.theta = -0.1
+	testing.expect(t, !validate_config(config))
+	config.theta = 0.5
+	config.softening = transmute(f64)u64(0x7ff0000000000000)
+	testing.expect(t, !validate_config(config))
+	config.softening = 0
+	config.gravitational_constant = transmute(f64)u64(0x7ff8000000000000)
 	testing.expect(t, !validate_config(config))
 }

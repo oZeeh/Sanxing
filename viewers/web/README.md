@@ -1,5 +1,5 @@
-# Web Viewer Placeholder
+# Web Viewer Prototype
 
-The future web viewer will consume the same JSONL frame contract documented in `docs/jsonl-format.md`.
+`prototype/index.html` preserves the original standalone browser replay tool. It is useful as a contract demonstration but is not currently a supported viewer.
 
-It must not own physics logic. Any future interactive mode must stay aligned with the headless Odin engine.
+The canonical local viewer is the native Odin/Raylib application in `viewers/local`. A future supported web viewer will remain independent and consume the same simulation-frame JSONL contract; it must not reproduce engine physics.

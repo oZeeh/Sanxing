@@ -1,19 +1,20 @@
-# Local Viewer
+# Native Local Viewer
 
-The local viewer consumes JSONL frames exported by the headless Odin engine. It is a standalone 2D replay tool and does not own solver, integrator, or state update behavior.
+The canonical local viewer is an Odin/Raylib 2D JSONL replay and inspection application. It consumes engine exports and contains no solver or integrator behavior.
 
-Open `index.html` directly in a browser, then load a `.jsonl` file produced by:
+Run with a file:
 
 ```sh
-odin run engine/src -- simulate engine/examples/simple_system.json /tmp/sanxing-simple.jsonl
+odin run viewers/local/src -- /tmp/sanxing-simple.jsonl
 ```
 
-Current controls:
+Or start without an argument and use the path field or drag-and-drop. Controls include playback, frame stepping, timeline seeking, speed, fit, middle-button pan, wheel zoom, trails, labels, and body inspection.
 
-- load a local JSONL file
-- play and pause replay
-- step forward and backward
-- scrub with the timeline
-- show current frame, step, time, and body count
+Verify the pure replay layer and viewer build:
 
-Physics logic remains in `engine/src`.
+```sh
+odin test viewers/local/src/replay
+odin check viewers/local/src
+```
+
+The viewer's `FrameSource` boundary is prepared for a future live engine adapter, but live execution and graphical simulation editing are not implemented yet.

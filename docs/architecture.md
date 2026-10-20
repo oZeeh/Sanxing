@@ -13,12 +13,15 @@ Current packages:
 - `integration`: semi-implicit Euler.
 - `spatial`: rectangle helpers and 2D quadtree construction with mass aggregation.
 - `export`: JSONL frame writer.
-- `benchmark`: deterministic body generation, timed samples, solver selection, and divergence records.
+- `benchmark`: deterministic performance workloads, timed samples, solver-work profiling, and aggregate summaries.
+- `accuracy`: untimed Barnes-Hut acceleration comparison against brute force.
+- `diagnostics`: energy, momentum, and trajectory comparison metrics.
+- `scenarios`: versioned deterministic experiment initial conditions.
 
 ## Local Viewer
 
-The local viewer consumes JSONL frames produced by the engine. Its first version is `viewers/local/index.html`, a standalone 2D replay tool with file loading, play/pause, stepping, timeline scrubbing, and frame metadata. It must not own physics rules, force equations, or integrator code.
+The canonical local viewer is an Odin application using Raylib and raygui. Its renderer and controls consume a viewer-owned immutable frame contract through a finite/seekable frame-source boundary. The current source is JSONL replay; a future live source may wrap an engine session without changing rendering or playback code. The viewer owns no physics rules.
 
 ## Future Web Viewer
 
-The web viewer will use the same JSONL contract as the local viewer. Any live or WASM mode must keep physics behavior aligned with the headless engine.
+The former standalone HTML replay tool is preserved under `viewers/web/prototype` as an unsupported prototype. A supported web viewer remains future work and must independently consume the same JSONL contract.

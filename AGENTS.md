@@ -24,6 +24,12 @@ odin test engine/src/spatial
 odin test engine/src/export
 odin test engine/src/input
 odin test engine/src/benchmark
+odin test engine/src/accuracy
+odin test engine/src/diagnostics
+odin test engine/src/scenarios
+odin test viewers/local/src/replay
+odin check viewers/local/src
 odin run engine/src -- simulate engine/examples/simple_system.json /tmp/sanxing-simple.jsonl
 odin run engine/src -- benchmark /tmp/sanxing-bench.jsonl
+odin run engine/src -- accuracy /tmp/sanxing-accuracy.jsonl --counts 100 --thetas 0,0.5
 ```

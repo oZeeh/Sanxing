@@ -41,3 +41,25 @@ test_jsonl_frame_structure :: proc(t: ^testing.T) {
 	testing.expect(t, parse_err == nil)
 	json.destroy_value(value)
 }
+
+@(test)
+test_diagnostics_structure :: proc(t: ^testing.T) {
+	path := "/tmp/sanxing-diagnostics-export-test.jsonl"
+	writer, ok := writer_open(path)
+	testing.expect(t, ok)
+	defer writer_close(&writer)
+	bodies := [?]simcore.Body{
+		{id = "a", mass = 1, position = simcore.vec2(-0.5, 0), velocity = simcore.vec2(0, -0.5)},
+		{id = "b", mass = 1, position = simcore.vec2(0.5, 0), velocity = simcore.vec2(0, 0.5)},
+	}
+	state := simcore.SimulationState{bodies = bodies[:]}
+	config := simcore.SimulationConfig{gravitational_constant = 1}
+	testing.expect(t, write_diagnostics(&writer, state, config))
+	writer_close(&writer)
+	data, err := os.read_entire_file(path, context.allocator)
+	testing.expect(t, err == nil)
+	defer delete(data)
+	text := string(data)
+	testing.expect(t, strings.contains(text, `"record_type":"simulation_diagnostics"`))
+	testing.expect(t, strings.contains(text, `"total_energy":-0.75`))
+}
