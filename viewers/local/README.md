@@ -5,8 +5,18 @@ The canonical local viewer is an Odin/Raylib 2D JSONL replay and inspection appl
 Run with a file:
 
 ```sh
-odin run viewers/local/src -- /tmp/sanxing-simple.jsonl
+./sanxing view /tmp/sanxing-simple.jsonl
 ```
+
+To simulate and then open the completed replay in one command:
+
+```sh
+./sanxing run engine/examples/simple_system.json
+```
+
+The launcher retains and prints its unique temporary replay path. This is sequential orchestration, not
+live coupling: the viewer opens only after the headless engine finishes. The direct viewer command
+`odin run viewers/local/src -- /tmp/sanxing-simple.jsonl` remains supported.
 
 Or start without an argument and use the path field or drag-and-drop. Controls include playback, frame stepping, timeline seeking, speed, fit, middle-button pan, wheel zoom, trails, labels, and body inspection.
 

@@ -17,27 +17,43 @@ The current implementation:
 ## Quick Start
 
 ```sh
-odin run engine/src -- simulate engine/examples/simple_system.json /tmp/sanxing-simple.jsonl
+./sanxing run engine/examples/simple_system.json
 ```
 
-The output file contains `steps + 1` JSON lines.
+This runs the headless simulation and opens its completed JSONL replay in the native viewer. The launcher
+prints and retains the generated replay path under `/tmp`. To choose the path or run without a viewer:
+
+```sh
+./sanxing simulate engine/examples/simple_system.json /tmp/sanxing-simple.jsonl
+./sanxing view /tmp/sanxing-simple.jsonl
+```
+
+Use `./sanxing --help` or `./sanxing help simulate` for structured command help. Direct
+`odin run engine/src -- ...` commands remain supported. A simulation output contains `steps + 1` JSON
+lines when export is enabled.
+
+Try the longer compact three-body close-encounter example:
+
+```sh
+./sanxing run engine/examples/close_encounter.json
+```
 
 Run benchmarks:
 
 ```sh
-odin run engine/src -- benchmark /tmp/sanxing-bench.jsonl
+./sanxing benchmark /tmp/sanxing-bench.jsonl
 ```
 
 Benchmark solver and accuracy options:
 
 ```sh
-odin run engine/src -- benchmark /tmp/sanxing-bench.jsonl --solver barnes_hut --theta 0.5
+./sanxing benchmark /tmp/sanxing-bench.jsonl --solver barnes_hut --theta 0.5
 ```
 
 Run a reproducible comparison sweep and generate a summary:
 
 ```sh
-odin run engine/src -- benchmark /tmp/sanxing-bench.jsonl \
+./sanxing benchmark /tmp/sanxing-bench.jsonl \
   --summary /tmp/sanxing-bench-summary.csv \
   --solver both --thetas 0.25,0.5,1.0 --warmups 1 \
   --run-id pilot --target-label local-x86_64 --opt-label default
@@ -46,7 +62,7 @@ odin run engine/src -- benchmark /tmp/sanxing-bench.jsonl \
 Measure force-approximation error without integration:
 
 ```sh
-odin run engine/src -- accuracy /tmp/sanxing-accuracy.jsonl \
+./sanxing accuracy /tmp/sanxing-accuracy.jsonl \
   --summary /tmp/sanxing-accuracy.csv --counts 100,500,1000 \
   --thetas 0,0.25,0.5,1.0 --run-id pilot
 ```
@@ -54,10 +70,13 @@ odin run engine/src -- accuracy /tmp/sanxing-accuracy.jsonl \
 Run the native viewer:
 
 ```sh
-odin run viewers/local/src -- /tmp/sanxing-simple.jsonl
+./sanxing view /tmp/sanxing-simple.jsonl
 ```
 
 ## Verify
+
+See the [testing guide](docs/testing-guide.md) for the full automated, smoke, viewer, and thesis-evidence
+test procedures.
 
 ```sh
 odin check engine/src
@@ -71,7 +90,10 @@ odin test engine/src/benchmark
 odin test engine/src/accuracy
 odin test engine/src/diagnostics
 odin test engine/src/scenarios
+odin test engine/src/cli
 odin test viewers/local/src/replay
+python3 -m unittest tools/test_analyze_experiments.py
+python3 -m unittest tools/test_cli_launcher.py
 ```
 
 ## Layout

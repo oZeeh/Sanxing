@@ -11,8 +11,24 @@ odin run src -- simulate examples/simple_system.json /tmp/sanxing-simple.jsonl
 From the repository root, use:
 
 ```sh
-odin run engine/src -- simulate engine/examples/simple_system.json /tmp/sanxing-simple.jsonl
+./sanxing simulate engine/examples/simple_system.json /tmp/sanxing-simple.jsonl
 ```
+
+The legacy direct command remains supported, as do named and mixed path arguments:
+
+```sh
+odin run engine/src -- simulate --input engine/examples/simple_system.json --output /tmp/sanxing-simple.jsonl
+odin run engine/src -- help simulate
+```
+
+For a longer compact three-body replay with repeated close encounters:
+
+```sh
+./sanxing run engine/examples/close_encounter.json
+```
+
+The engine currently has no collision or merging model. Close bodies interact through softened gravity
+and can pass through one another.
 
 The runtime requires the `simulate`, `benchmark`, or `accuracy` subcommand. The current simulation runtime supports the `brute_force` and `barnes_hut` solvers. Barnes-Hut uses a 2D quadtree and the configured opening threshold `theta`.
 
@@ -21,7 +37,7 @@ Simulation inputs are strict JSON. Top-level, `config`, body, and vector objects
 Run compute-only benchmarks:
 
 ```sh
-odin run engine/src -- benchmark /tmp/sanxing-bench.jsonl
+./sanxing benchmark /tmp/sanxing-bench.jsonl
 ```
 
 Benchmark defaults are counts `100,500,1000,5000,10000`, `10` steps, `3` timed samples, `1` unrecorded warmup, and solver `brute_force`. Raw results are appended as schema-versioned JSONL records. Solver work is collected in an untimed deterministic replay so timing measures the normal solver path.
@@ -29,7 +45,7 @@ Benchmark defaults are counts `100,500,1000,5000,10000`, `10` steps, `3` timed s
 Run both solvers across a Barnes-Hut theta sweep and write a summary CSV:
 
 ```sh
-odin run engine/src -- benchmark /tmp/sanxing-bench.jsonl \
+./sanxing benchmark /tmp/sanxing-bench.jsonl \
   --summary /tmp/sanxing-bench-summary.csv \
   --solver both --thetas 0.25,0.5,1.0 \
   --warmups 1 --run-id pilot --target-label local-x86_64 --opt-label default
@@ -40,7 +56,7 @@ Supported flags are `--counts`, `--steps`, `--samples`, `--warmups`, `--solver`,
 Force accuracy is measured without advancing or integrating the system:
 
 ```sh
-odin run engine/src -- accuracy /tmp/sanxing-accuracy.jsonl \
+./sanxing accuracy /tmp/sanxing-accuracy.jsonl \
   --summary /tmp/sanxing-accuracy.csv \
   --counts 100,500,1000,5000,10000 --thetas 0,0.25,0.5,1.0 \
   --run-id pilot --target-label local-x86_64 --opt-label speed

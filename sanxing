@@ -1,0 +1,173 @@
+#!/usr/bin/env sh
+set -u
+
+repo_root=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+
+print_help() {
+  cat <<'EOF'
+Sanxing — deterministic 2D N-body simulation
+
+Usage:
+  ./sanxing <command> [options]
+
+Commands:
+  run        Simulate, then open the completed JSONL replay in the native viewer
+  simulate   Run the headless engine
+  view       Open the native JSONL replay viewer
+  benchmark  Run deterministic solver benchmarks
+  accuracy   Measure Barnes-Hut force error
+  help       Show general or command-specific help
+
+Examples:
+  ./sanxing run engine/examples/simple_system.json
+  ./sanxing simulate engine/examples/simple_system.json /tmp/replay.jsonl
+  ./sanxing view /tmp/replay.jsonl
+
+Run './sanxing help <command>' for details.
+EOF
+}
+
+print_run_help() {
+  cat <<'EOF'
+Usage:
+  ./sanxing run INPUT [-o OUTPUT] [--diagnostics PATH]
+  ./sanxing run --input INPUT [--output OUTPUT] [--diagnostics PATH]
+
+The simulation finishes before the replay viewer opens. If OUTPUT is omitted,
+a unique replay file is created under /tmp and retained after the viewer closes.
+EOF
+}
+
+print_view_help() {
+  cat <<'EOF'
+Usage:
+  ./sanxing view [REPLAY.jsonl]
+
+Without a path, the viewer opens with its path field and drag-and-drop enabled.
+EOF
+}
+
+if [ "$#" -eq 0 ]; then
+  print_help
+  exit 0
+fi
+
+command_name=$1
+shift
+
+case "$command_name" in
+  -h|--help)
+    print_help
+    exit 0
+    ;;
+  help)
+    if [ "$#" -eq 0 ]; then
+      print_help
+      exit 0
+    fi
+    if [ "$#" -ne 1 ]; then
+      echo "error: help accepts at most one command name" >&2
+      exit 2
+    fi
+    case "$1" in
+      run) print_run_help ;;
+      view) print_view_help ;;
+      simulate|benchmark|accuracy)
+        exec odin run "$repo_root/engine/src" -- "$1" --help
+        ;;
+      *)
+        echo "error: unknown help topic: $1" >&2
+        exit 2
+        ;;
+    esac
+    exit 0
+    ;;
+  simulate|benchmark|accuracy)
+    exec odin run "$repo_root/engine/src" -- "$command_name" "$@"
+    ;;
+  view)
+    if [ "$#" -eq 1 ] && { [ "$1" = "-h" ] || [ "$1" = "--help" ]; }; then
+      print_view_help
+      exit 0
+    fi
+    if [ "$#" -gt 1 ]; then
+      echo "error: view accepts at most one replay path" >&2
+      exit 2
+    fi
+    if [ "$#" -eq 1 ]; then
+      exec odin run "$repo_root/viewers/local/src" -- "$1"
+    fi
+    exec odin run "$repo_root/viewers/local/src"
+    ;;
+  run)
+    input_path=
+    output_path=
+    diagnostics_path=
+    positional_seen=0
+    while [ "$#" -gt 0 ]; do
+      case "$1" in
+        -h|--help)
+          print_run_help
+          exit 0
+          ;;
+        -i|--input)
+          if [ "$#" -lt 2 ]; then echo "error: $1 requires a value" >&2; exit 2; fi
+          if [ -n "$input_path" ]; then echo "error: simulation input was provided more than once" >&2; exit 2; fi
+          input_path=$2
+          shift 2
+          ;;
+        -o|--output)
+          if [ "$#" -lt 2 ]; then echo "error: $1 requires a value" >&2; exit 2; fi
+          if [ -n "$output_path" ]; then echo "error: simulation output was provided more than once" >&2; exit 2; fi
+          output_path=$2
+          shift 2
+          ;;
+        --diagnostics)
+          if [ "$#" -lt 2 ]; then echo "error: --diagnostics requires a value" >&2; exit 2; fi
+          if [ -n "$diagnostics_path" ]; then echo "error: diagnostics output was provided more than once" >&2; exit 2; fi
+          diagnostics_path=$2
+          shift 2
+          ;;
+        -*)
+          echo "error: unknown run flag: $1" >&2
+          exit 2
+          ;;
+        *)
+          if [ "$positional_seen" -ne 0 ] || [ -n "$input_path" ]; then
+            echo "error: simulation input was provided more than once" >&2
+            exit 2
+          fi
+          input_path=$1
+          positional_seen=1
+          shift
+          ;;
+      esac
+    done
+    if [ -z "$input_path" ]; then
+      echo "error: run requires an input JSON path" >&2
+      exit 2
+    fi
+    if [ -z "$output_path" ]; then
+      output_path=$(mktemp /tmp/sanxing-replay.XXXXXX.jsonl) || exit 1
+      echo "Replay output: $output_path"
+    fi
+    echo "Running headless simulation before opening the viewer..."
+    if [ -n "$diagnostics_path" ]; then
+      odin run "$repo_root/engine/src" -- simulate --input "$input_path" --output "$output_path" --diagnostics "$diagnostics_path" || exit $?
+    else
+      odin run "$repo_root/engine/src" -- simulate --input "$input_path" --output "$output_path" || exit $?
+    fi
+    if [ ! -s "$output_path" ]; then
+      echo "error: simulation produced no replay; ensure export_enabled is true" >&2
+      exit 1
+    fi
+    echo "Opening replay viewer: $output_path"
+    odin run "$repo_root/viewers/local/src" -- "$output_path"
+    exit $?
+    ;;
+  *)
+    echo "error: unknown command: $command_name" >&2
+    echo "Run './sanxing --help' for usage." >&2
+    exit 2
+    ;;
+esac

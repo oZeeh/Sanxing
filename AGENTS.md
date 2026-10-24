@@ -27,6 +27,7 @@ odin test engine/src/benchmark
 odin test engine/src/accuracy
 odin test engine/src/diagnostics
 odin test engine/src/scenarios
+odin test engine/src/cli
 odin test viewers/local/src/replay
 odin check viewers/local/src
 odin run engine/src -- simulate engine/examples/simple_system.json /tmp/sanxing-simple.jsonl

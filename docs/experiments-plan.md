@@ -44,10 +44,14 @@ The softened Burrau/Pythagorean fixtures use masses `3,4,5`, zero initial veloci
 
 `tools/analyze_experiments.py` uses only the Python standard library. It produces:
 
-- runtime and speedup plots;
-- Barnes-Hut force-error plots;
-- Euler convergence and conservation tables/plots;
+- runtime plots with standard-deviation error bars and speedup plots;
+- Barnes-Hut direct/approximated interaction, tree-visit, and force-error plots;
+- Euler position-convergence, energy-drift, and momentum-drift tables/plots;
 - full trajectory-separation CSV and a downsampled SVG;
-- a concise report describing the interpretation limits.
+- a concise report with key numeric findings, anomaly warnings, and interpretation limits.
+
+After analysis, the runner validates the expected matrix and artifact set. A successful bundle is marked
+`complete` in `manifest.json`, which also records file sizes and SHA-256 digests. An interrupted or
+incomplete run remains marked `running` and must not be treated as definitive evidence.
 
 Do not commit measurements as representative thesis results without their manifest. A run from a dirty tree is a pilot even if all commands succeed.

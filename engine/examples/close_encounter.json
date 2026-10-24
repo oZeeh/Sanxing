@@ -1,0 +1,33 @@
+{
+  "config": {
+    "gravitational_constant": 1.0,
+    "delta_time": 0.0025,
+    "steps": 1200,
+    "softening": 0.02,
+    "solver": "brute_force",
+    "export_enabled": true
+  },
+  "bodies": [
+    {
+      "id": "amber",
+      "mass": 1.0,
+      "position": {"x": -0.55, "y": -0.18},
+      "velocity": {"x": 0.08, "y": 0.10},
+      "acceleration": {"x": 0.0, "y": 0.0}
+    },
+    {
+      "id": "cyan",
+      "mass": 0.96,
+      "position": {"x": 0.55, "y": -0.18},
+      "velocity": {"x": -0.08, "y": 0.10},
+      "acceleration": {"x": 0.0, "y": 0.0}
+    },
+    {
+      "id": "violet",
+      "mass": 1.04,
+      "position": {"x": 0.0, "y": 0.56},
+      "velocity": {"x": 0.0, "y": -0.19},
+      "acceleration": {"x": 0.0, "y": 0.0}
+    }
+  ]
+}

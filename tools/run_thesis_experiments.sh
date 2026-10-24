@@ -14,7 +14,7 @@ if [ -e "$output_dir" ]; then
 fi
 
 cd "$repo_root"
-if ! git diff --quiet || ! git diff --cached --quiet; then
+if [ -n "$(git status --porcelain)" ]; then
   echo "definitive experiments require a clean Git revision" >&2
   exit 1
 fi
@@ -46,4 +46,5 @@ for name in two_body_orbit_100 two_body_orbit_200 two_body_orbit_400 \
 done
 
 python3 tools/analyze_experiments.py analyze "$output_dir"
+python3 tools/analyze_experiments.py complete "$output_dir"
 echo "completed thesis experiment bundle: $output_dir"

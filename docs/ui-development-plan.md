@@ -26,6 +26,9 @@ Live operation is deliberately deferred until the serial thesis results are acce
 
 The source boundary exists now so live operation does not require renderer, camera, timeline, or inspector rewrites.
 
+The repository launcher may run a simulation and open its finished replay as one user command. This
+workflow remains offline and sequential; it is not the deferred `LiveEngineSource`.
+
 ## Web Prototype and Later Work
 
 The previous standalone HTML replay tool is preserved at `viewers/web/prototype/index.html`. It is an unsupported prototype, not a second local viewer. A supported web viewer must remain independent, consume the documented simulation-frame contract, and begin as JSONL replay.

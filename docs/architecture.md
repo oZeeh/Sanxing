@@ -22,6 +22,10 @@ Current packages:
 
 The canonical local viewer is an Odin application using Raylib and raygui. Its renderer and controls consume a viewer-owned immutable frame contract through a finite/seekable frame-source boundary. The current source is JSONL replay; a future live source may wrap an engine session without changing rendering or playback code. The viewer owns no physics rules.
 
+The repository-level `./sanxing run` command is convenience orchestration: it completes a headless
+simulation and then opens the exported JSONL in the viewer. It does not create a live engine/viewer
+dependency or change the replay boundary.
+
 ## Future Web Viewer
 
 The former standalone HTML replay tool is preserved under `viewers/web/prototype` as an unsupported prototype. A supported web viewer remains future work and must independently consume the same JSONL contract.
