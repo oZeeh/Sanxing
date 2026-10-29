@@ -6,5 +6,7 @@ ser transportada para a fonte principal do trabalho.
 
 ## Conteúdo
 
-- [Capítulo 4 — Desenvolvimento](capitulo-4-desenvolvimento.md)
+- [Extensão do Capítulo 4 — Linguagem Odin](capitulo-4-linguagem-odin.md)
+- [Extensão do Capítulo 4 — Interface de visualização](capitulo-4-interface-visualizacao.md)
+- [Capítulo 5 — Experimentos e resultados](capitulo-5-experimentos-resultados.md)
 

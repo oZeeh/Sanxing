@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520">
+<rect width="100%" height="100%" fill="#111315"/>
+<text x="450.0" y="30" text-anchor="middle" fill="#eef2f1" font-family="sans-serif" font-size="20">Semi-implicit Euler momentum conservation</text>
+<line x1="90" y1="450" x2="870" y2="450" stroke="#9eaaa5"/>
+<line x1="90" y1="55" x2="90" y2="450" stroke="#9eaaa5"/>
+<text x="450.0" y="502" text-anchor="middle" fill="#eef2f1" font-family="sans-serif">Steps per orbit (log10)</text>
+<text x="20" y="260.0" text-anchor="middle" transform="rotate(-90 20 260.0)" fill="#eef2f1" font-family="sans-serif">Maximum momentum drift norm (log10)</text>
+<polyline points="90.00,450.00 480.00,450.00 870.00,450.00" fill="none" stroke="#42c6a4" stroke-width="2"/>
+<circle cx="90.00" cy="450.00" r="3" fill="#42c6a4"/>
+<circle cx="480.00" cy="450.00" r="3" fill="#42c6a4"/>
+<circle cx="870.00" cy="450.00" r="3" fill="#42c6a4"/>
+<text x="98" y="55" fill="#42c6a4" font-family="sans-serif" font-size="12">momentum drift</text>
+</svg>

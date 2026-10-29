@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520">
+<rect width="100%" height="100%" fill="#111315"/>
+<text x="450.0" y="30" text-anchor="middle" fill="#eef2f1" font-family="sans-serif" font-size="20">Barnes-Hut tree traversal</text>
+<line x1="90" y1="450" x2="870" y2="450" stroke="#9eaaa5"/>
+<line x1="90" y1="55" x2="90" y2="450" stroke="#9eaaa5"/>
+<text x="450.0" y="502" text-anchor="middle" fill="#eef2f1" font-family="sans-serif">Bodies (log10)</text>
+<text x="20" y="260.0" text-anchor="middle" transform="rotate(-90 20 260.0)" fill="#eef2f1" font-family="sans-serif">Node visits (log10)</text>
+<polyline points="90.00,394.70 362.60,263.47 480.00,211.15 752.60,108.76 870.00,55.00" fill="none" stroke="#42c6a4" stroke-width="2"/>
+<circle cx="90.00" cy="394.70" r="3" fill="#42c6a4"/>
+<circle cx="362.60" cy="263.47" r="3" fill="#42c6a4"/>
+<circle cx="480.00" cy="211.15" r="3" fill="#42c6a4"/>
+<circle cx="752.60" cy="108.76" r="3" fill="#42c6a4"/>
+<circle cx="870.00" cy="55.00" r="3" fill="#42c6a4"/>
+<text x="98" y="55" fill="#42c6a4" font-family="sans-serif" font-size="12">theta=0.25</text>
+<polyline points="90.00,419.41 362.60,293.83 480.00,249.03 752.60,159.95 870.00,113.05" fill="none" stroke="#f2b84b" stroke-width="2"/>
+<circle cx="90.00" cy="419.41" r="3" fill="#f2b84b"/>
+<circle cx="362.60" cy="293.83" r="3" fill="#f2b84b"/>
+<circle cx="480.00" cy="249.03" r="3" fill="#f2b84b"/>
+<circle cx="752.60" cy="159.95" r="3" fill="#f2b84b"/>
+<circle cx="870.00" cy="113.05" r="3" fill="#f2b84b"/>
+<text x="98" y="73" fill="#f2b84b" font-family="sans-serif" font-size="12">theta=0.5</text>
+<polyline points="90.00,450.00 362.60,332.55 480.00,288.82 752.60,213.71 870.00,173.49" fill="none" stroke="#7db7ff" stroke-width="2"/>
+<circle cx="90.00" cy="450.00" r="3" fill="#7db7ff"/>
+<circle cx="362.60" cy="332.55" r="3" fill="#7db7ff"/>
+<circle cx="480.00" cy="288.82" r="3" fill="#7db7ff"/>
+<circle cx="752.60" cy="213.71" r="3" fill="#7db7ff"/>
+<circle cx="870.00" cy="173.49" r="3" fill="#7db7ff"/>
+<text x="98" y="91" fill="#7db7ff" font-family="sans-serif" font-size="12">theta=1</text>
+</svg>

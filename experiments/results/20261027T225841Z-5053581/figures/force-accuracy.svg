@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520">
+<rect width="100%" height="100%" fill="#111315"/>
+<text x="450.0" y="30" text-anchor="middle" fill="#eef2f1" font-family="sans-serif" font-size="20">Barnes-Hut acceleration error</text>
+<line x1="90" y1="450" x2="870" y2="450" stroke="#9eaaa5"/>
+<line x1="90" y1="55" x2="90" y2="450" stroke="#9eaaa5"/>
+<text x="450.0" y="502" text-anchor="middle" fill="#eef2f1" font-family="sans-serif">Theta</text>
+<text x="20" y="260.0" text-anchor="middle" transform="rotate(-90 20 260.0)" fill="#eef2f1" font-family="sans-serif">Normalized L2 error (log10)</text>
+<polyline points="90.00,450.00 350.00,259.73 870.00,56.69" fill="none" stroke="#42c6a4" stroke-width="2"/>
+<circle cx="90.00" cy="450.00" r="3" fill="#42c6a4"/>
+<circle cx="350.00" cy="259.73" r="3" fill="#42c6a4"/>
+<circle cx="870.00" cy="56.69" r="3" fill="#42c6a4"/>
+<text x="98" y="55" fill="#42c6a4" font-family="sans-serif" font-size="12">N=100</text>
+<polyline points="90.00,385.55 350.00,228.94 870.00,65.60" fill="none" stroke="#f2b84b" stroke-width="2"/>
+<circle cx="90.00" cy="385.55" r="3" fill="#f2b84b"/>
+<circle cx="350.00" cy="228.94" r="3" fill="#f2b84b"/>
+<circle cx="870.00" cy="65.60" r="3" fill="#f2b84b"/>
+<text x="98" y="73" fill="#f2b84b" font-family="sans-serif" font-size="12">N=500</text>
+<polyline points="90.00,362.07 350.00,213.22 870.00,55.00" fill="none" stroke="#7db7ff" stroke-width="2"/>
+<circle cx="90.00" cy="362.07" r="3" fill="#7db7ff"/>
+<circle cx="350.00" cy="213.22" r="3" fill="#7db7ff"/>
+<circle cx="870.00" cy="55.00" r="3" fill="#7db7ff"/>
+<text x="98" y="91" fill="#7db7ff" font-family="sans-serif" font-size="12">N=1000</text>
+<polyline points="90.00,346.62 350.00,208.01 870.00,59.68" fill="none" stroke="#ef6f6c" stroke-width="2"/>
+<circle cx="90.00" cy="346.62" r="3" fill="#ef6f6c"/>
+<circle cx="350.00" cy="208.01" r="3" fill="#ef6f6c"/>
+<circle cx="870.00" cy="59.68" r="3" fill="#ef6f6c"/>
+<text x="98" y="109" fill="#ef6f6c" font-family="sans-serif" font-size="12">N=5000</text>
+<polyline points="90.00,345.69 350.00,215.57 870.00,68.96" fill="none" stroke="#d39cff" stroke-width="2"/>
+<circle cx="90.00" cy="345.69" r="3" fill="#d39cff"/>
+<circle cx="350.00" cy="215.57" r="3" fill="#d39cff"/>
+<circle cx="870.00" cy="68.96" r="3" fill="#d39cff"/>
+<text x="98" y="127" fill="#d39cff" font-family="sans-serif" font-size="12">N=10000</text>
+</svg>

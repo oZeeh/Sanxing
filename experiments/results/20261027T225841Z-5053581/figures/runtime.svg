@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520">
+<rect width="100%" height="100%" fill="#111315"/>
+<text x="450.0" y="30" text-anchor="middle" fill="#eef2f1" font-family="sans-serif" font-size="20">Mean runtime by body count</text>
+<line x1="90" y1="450" x2="870" y2="450" stroke="#9eaaa5"/>
+<line x1="90" y1="55" x2="90" y2="450" stroke="#9eaaa5"/>
+<text x="450.0" y="502" text-anchor="middle" fill="#eef2f1" font-family="sans-serif">Bodies (log10)</text>
+<text x="20" y="260.0" text-anchor="middle" transform="rotate(-90 20 260.0)" fill="#eef2f1" font-family="sans-serif">Seconds (log10)</text>
+<polyline points="90.00,450.00 362.60,304.96 480.00,252.65 752.60,115.22 870.00,55.00" fill="none" stroke="#42c6a4" stroke-width="2"/>
+<line x1="90.00" y1="451.55" x2="90.00" y2="448.50" stroke="#42c6a4"/>
+<circle cx="90.00" cy="450.00" r="3" fill="#42c6a4"/>
+<line x1="362.60" y1="311.57" x2="362.60" y2="299.24" stroke="#42c6a4"/>
+<circle cx="362.60" cy="304.96" r="3" fill="#42c6a4"/>
+<line x1="480.00" y1="253.96" x2="480.00" y2="251.39" stroke="#42c6a4"/>
+<circle cx="480.00" cy="252.65" r="3" fill="#42c6a4"/>
+<line x1="752.60" y1="115.56" x2="752.60" y2="114.88" stroke="#42c6a4"/>
+<circle cx="752.60" cy="115.22" r="3" fill="#42c6a4"/>
+<line x1="870.00" y1="55.44" x2="870.00" y2="54.57" stroke="#42c6a4"/>
+<circle cx="870.00" cy="55.00" r="3" fill="#42c6a4"/>
+<text x="98" y="55" fill="#42c6a4" font-family="sans-serif" font-size="12">brute_force</text>
+<polyline points="90.00,371.58 362.60,248.92 480.00,212.74 752.60,121.01 870.00,78.87" fill="none" stroke="#f2b84b" stroke-width="2"/>
+<line x1="90.00" y1="373.28" x2="90.00" y2="369.94" stroke="#f2b84b"/>
+<circle cx="90.00" cy="371.58" r="3" fill="#f2b84b"/>
+<line x1="362.60" y1="256.83" x2="362.60" y2="242.24" stroke="#f2b84b"/>
+<circle cx="362.60" cy="248.92" r="3" fill="#f2b84b"/>
+<line x1="480.00" y1="213.63" x2="480.00" y2="211.88" stroke="#f2b84b"/>
+<circle cx="480.00" cy="212.74" r="3" fill="#f2b84b"/>
+<line x1="752.60" y1="122.56" x2="752.60" y2="119.51" stroke="#f2b84b"/>
+<circle cx="752.60" cy="121.01" r="3" fill="#f2b84b"/>
+<line x1="870.00" y1="79.18" x2="870.00" y2="78.57" stroke="#f2b84b"/>
+<circle cx="870.00" cy="78.87" r="3" fill="#f2b84b"/>
+<text x="98" y="73" fill="#f2b84b" font-family="sans-serif" font-size="12">barnes_hut theta=0.25</text>
+<polyline points="90.00,385.70 362.60,281.94 480.00,244.98 752.60,165.27 870.00,126.83" fill="none" stroke="#7db7ff" stroke-width="2"/>
+<line x1="90.00" y1="387.66" x2="90.00" y2="383.83" stroke="#7db7ff"/>
+<circle cx="90.00" cy="385.70" r="3" fill="#7db7ff"/>
+<line x1="362.60" y1="282.75" x2="362.60" y2="281.14" stroke="#7db7ff"/>
+<circle cx="362.60" cy="281.94" r="3" fill="#7db7ff"/>
+<line x1="480.00" y1="245.19" x2="480.00" y2="244.76" stroke="#7db7ff"/>
+<circle cx="480.00" cy="244.98" r="3" fill="#7db7ff"/>
+<line x1="752.60" y1="166.07" x2="752.60" y2="164.48" stroke="#7db7ff"/>
+<circle cx="752.60" cy="165.27" r="3" fill="#7db7ff"/>
+<line x1="870.00" y1="127.52" x2="870.00" y2="126.14" stroke="#7db7ff"/>
+<circle cx="870.00" cy="126.83" r="3" fill="#7db7ff"/>
+<text x="98" y="91" fill="#7db7ff" font-family="sans-serif" font-size="12">barnes_hut theta=0.5</text>
+<polyline points="90.00,400.77 362.60,306.27 480.00,271.23 752.60,196.26 870.00,161.95" fill="none" stroke="#ef6f6c" stroke-width="2"/>
+<line x1="90.00" y1="402.49" x2="90.00" y2="399.11" stroke="#ef6f6c"/>
+<circle cx="90.00" cy="400.77" r="3" fill="#ef6f6c"/>
+<line x1="362.60" y1="307.43" x2="362.60" y2="305.14" stroke="#ef6f6c"/>
+<circle cx="362.60" cy="306.27" r="3" fill="#ef6f6c"/>
+<line x1="480.00" y1="271.36" x2="480.00" y2="271.10" stroke="#ef6f6c"/>
+<circle cx="480.00" cy="271.23" r="3" fill="#ef6f6c"/>
+<line x1="752.60" y1="200.17" x2="752.60" y2="192.69" stroke="#ef6f6c"/>
+<circle cx="752.60" cy="196.26" r="3" fill="#ef6f6c"/>
+<line x1="870.00" y1="162.94" x2="870.00" y2="160.99" stroke="#ef6f6c"/>
+<circle cx="870.00" cy="161.95" r="3" fill="#ef6f6c"/>
+<text x="98" y="109" fill="#ef6f6c" font-family="sans-serif" font-size="12">barnes_hut theta=1</text>
+</svg>

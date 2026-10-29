@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520">
+<rect width="100%" height="100%" fill="#111315"/>
+<text x="450.0" y="30" text-anchor="middle" fill="#eef2f1" font-family="sans-serif" font-size="20">Barnes-Hut force contributions</text>
+<line x1="90" y1="450" x2="870" y2="450" stroke="#9eaaa5"/>
+<line x1="90" y1="55" x2="90" y2="450" stroke="#9eaaa5"/>
+<text x="450.0" y="502" text-anchor="middle" fill="#eef2f1" font-family="sans-serif">Bodies (log10)</text>
+<text x="20" y="260.0" text-anchor="middle" transform="rotate(-90 20 260.0)" fill="#eef2f1" font-family="sans-serif">Contributions (log10)</text>
+<polyline points="90.00,370.76 362.60,259.49 480.00,217.64 752.60,154.50 870.00,123.88" fill="none" stroke="#42c6a4" stroke-width="2"/>
+<circle cx="90.00" cy="370.76" r="3" fill="#42c6a4"/>
+<circle cx="362.60" cy="259.49" r="3" fill="#42c6a4"/>
+<circle cx="480.00" cy="217.64" r="3" fill="#42c6a4"/>
+<circle cx="752.60" cy="154.50" r="3" fill="#42c6a4"/>
+<circle cx="870.00" cy="123.88" r="3" fill="#42c6a4"/>
+<text x="98" y="55" fill="#42c6a4" font-family="sans-serif" font-size="12">direct theta=0.25</text>
+<polyline points="90.00,430.51 362.60,286.07 480.00,227.44 752.60,109.98 870.00,55.00" fill="none" stroke="#f2b84b" stroke-width="2"/>
+<circle cx="90.00" cy="430.51" r="3" fill="#f2b84b"/>
+<circle cx="362.60" cy="286.07" r="3" fill="#f2b84b"/>
+<circle cx="480.00" cy="227.44" r="3" fill="#f2b84b"/>
+<circle cx="752.60" cy="109.98" r="3" fill="#f2b84b"/>
+<circle cx="870.00" cy="55.00" r="3" fill="#f2b84b"/>
+<text x="98" y="73" fill="#f2b84b" font-family="sans-serif" font-size="12">approximated theta=0.25</text>
+<polyline points="90.00,407.33 362.60,298.64 480.00,267.51 752.60,215.29 870.00,192.95" fill="none" stroke="#7db7ff" stroke-width="2"/>
+<circle cx="90.00" cy="407.33" r="3" fill="#7db7ff"/>
+<circle cx="362.60" cy="298.64" r="3" fill="#7db7ff"/>
+<circle cx="480.00" cy="267.51" r="3" fill="#7db7ff"/>
+<circle cx="752.60" cy="215.29" r="3" fill="#7db7ff"/>
+<circle cx="870.00" cy="192.95" r="3" fill="#7db7ff"/>
+<text x="98" y="91" fill="#7db7ff" font-family="sans-serif" font-size="12">direct theta=0.5</text>
+<polyline points="90.00,418.43 362.60,295.61 480.00,245.57 752.60,151.24 870.00,104.45" fill="none" stroke="#ef6f6c" stroke-width="2"/>
+<circle cx="90.00" cy="418.43" r="3" fill="#ef6f6c"/>
+<circle cx="362.60" cy="295.61" r="3" fill="#ef6f6c"/>
+<circle cx="480.00" cy="245.57" r="3" fill="#ef6f6c"/>
+<circle cx="752.60" cy="151.24" r="3" fill="#ef6f6c"/>
+<circle cx="870.00" cy="104.45" r="3" fill="#ef6f6c"/>
+<text x="98" y="109" fill="#ef6f6c" font-family="sans-serif" font-size="12">approximated theta=0.5</text>
+<polyline points="90.00,450.00 362.60,350.02 480.00,317.12 752.60,283.05 870.00,259.30" fill="none" stroke="#d39cff" stroke-width="2"/>
+<circle cx="90.00" cy="450.00" r="3" fill="#d39cff"/>
+<circle cx="362.60" cy="350.02" r="3" fill="#d39cff"/>
+<circle cx="480.00" cy="317.12" r="3" fill="#d39cff"/>
+<circle cx="752.60" cy="283.05" r="3" fill="#d39cff"/>
+<circle cx="870.00" cy="259.30" r="3" fill="#d39cff"/>
+<text x="98" y="127" fill="#d39cff" font-family="sans-serif" font-size="12">direct theta=1</text>
+<polyline points="90.00,435.80 362.60,318.60 480.00,274.22 752.60,196.36 870.00,157.75" fill="none" stroke="#ff9f7d" stroke-width="2"/>
+<circle cx="90.00" cy="435.80" r="3" fill="#ff9f7d"/>
+<circle cx="362.60" cy="318.60" r="3" fill="#ff9f7d"/>
+<circle cx="480.00" cy="274.22" r="3" fill="#ff9f7d"/>
+<circle cx="752.60" cy="196.36" r="3" fill="#ff9f7d"/>
+<circle cx="870.00" cy="157.75" r="3" fill="#ff9f7d"/>
+<text x="98" y="145" fill="#ff9f7d" font-family="sans-serif" font-size="12">approximated theta=1</text>
+</svg>
